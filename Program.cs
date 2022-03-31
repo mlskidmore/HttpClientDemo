@@ -1,6 +1,12 @@
 using HttpClientDemo.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+
+IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                  .AddEnvironmentVariables()
+                                                  .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +15,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("meta", c =>
+{
+    c.BaseAddress = new Uri(config.GetValue<string>("MetaAPI"));
+});
 
 var app = builder.Build();
 
